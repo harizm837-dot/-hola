@@ -1,0 +1,19 @@
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system}
+body{overflow:hidden;background:#000;color:#fff;}
+#intro{
+  position:fixed;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:1.2rem;
+  z-index:10;
+  text-align:center;
+}
+#logo{font-size:3rem;color:#4fd1ff;}
+#logo span{color:#ffd166;}
+#enterBtn{
+  padding:0.8rem 2.2rem;border-radius:999px;border:none;
+  background:rgba(255,255,255,0.1);color:#fff;cursor:pointer;
+  transition:.3s;
+}
+#enterBtn:hover{background:#fff;color:#000;}
+canvas{width:100vw;height:100vh;display:block;position:fixed;inset:0;z-index:-1;}
+footer{position:absolute;bottom:1rem;font-size:0.75rem;color:#888;}
