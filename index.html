@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hola Live</title>
+  <link rel="manifest" href="manifest.json">
+  <style>
+    :root{
+      --bg1: #0b1c3d;
+      --bg2: #102a56;
+      --accent: #4fd1ff;
+      --text: #ffffff;
+      --shadow: rgba(0,0,0,0.25);
+    }
+    *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,BlinkMacSystemFont;}
+    body{
+      background: #000;
+      color: var(--text);
+      overflow: hidden;
+      position: relative;
+      height: 100vh;
+    }
+    /* ===== Particle background ===== */
+    body::before{
+      content:"";
+      position:fixed; inset:0;
+      background:
+        radial-gradient(circle at 30% 30%, var(--bg1), transparent 70%),
+        radial-gradient(circle at 70% 70%, var(--bg2), transparent 60%);
+      animation:bgMove 25s linear infinite;
+      z-index:-2;
+    }
+    @keyframes bgMove{
+      0%{transform:scale(1) translate(0,0);}
+      50%{transform:scale(1.05) translate(-30px,-20px);}
+      100%{transform:scale(1) translate(0,0);}
+    }
+    /* ===== Canvas Globe ===== */
+    canvas{
+      width:100vw;
+      height:100vh;
+      display:block;
+      position:fixed;
+      top:0; left:0;
+      z-index:-1;
+    }
+    /* ===== Intro container ===== */
+    #intro{
+      position:fixed; inset:0;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:1.2rem;
+      z-index:10;
+      transition:opacity 1s ease;
+    }
+    #intro.hide{opacity:0; pointer-events:none;}
+    #logo{
+      font-size:2.8rem;
+      letter-spacing:0.14em;
+      display:flex;
+      gap:0.08em;
+    }
+    #logo span{
+      display:inline-block;
+      opacity:0;
+      transform: translate(var(--x), var(--y)) scale(0.8);
+      animation:assemble 1.2s ease forwards;
+    }
+    @keyframes assemble{
+      to{opacity:1; transform:translate(0,0) scale(1);}
+    }
+    #intro p{
+      font-size:0.95rem;
+      opacity:0.85;
+    }
+    #enterBtn{
+      margin-top:1rem;
+      padding:0.75rem 2.6rem;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.05);
+      color:#fff;
+      backdrop-filter: blur(6px);
+      font-size:0.95rem;
+      cursor:pointer;
+      transition: all 0.3s ease;
+    }
+    #enterBtn:hover{
+      background:#fff;
+      color:#000;
+    }
+    /* ===== Footer ===== */
+    #footer{
+      position:fixed;
+      bottom:12px;
+      width:100%;
+      text-align:center;
+      font-size:0.75rem;
+      opacity:0.65;
+      z-index:10;
+    }
+  </style>
+</head>
+<body>
+  <!-- Intro cinematic -->
+  <div id="intro">
+    <h1 id="logo">
+      <span>H</span><span>o</span><span>l</span><span>a</span>
+      <span>&nbsp;</span>
+      <span>L</span><span>i</span><span>v</span><span>e</span>
+    </h1>
+    <p>Амьд стример төвтэй · Token & Gift эдийн засаг</p>
+    <button id="enterBtn">НЭВТРЭХ</button>
+  </div>
+
+  <canvas id="globe"></canvas>
+  <div id="footer">© 2026 Hola Live. Бүх эрх хуулиар хамгаалагдсан.</div>
+
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+  <script>
+    // Logo letters random offset
+    const logoLetters=document.querySelectorAll("#logo span");
+    logoLetters.forEach(letter=>{
+      const x=(Math.random()-0.5)*300;
+      const y=(Math.random()-0.5)*200;
+      letter.style.setProperty("--x",`${x}px`);
+      letter.style.setProperty("--y",`${y}px`);
+    });
+
+    const intro=document.getElementById("intro");
+    const enterBtn=document.getElementById("enterBtn");
+    enterBtn.addEventListener("click",()=>{
+      intro.classList.add("hide");
+      setTimeout(()=>{window.location.href="app.html";},1200);
+    });
+
+    // Three.js Globe
+    const scene=new THREE.Scene();
+    const camera=new THREE.PerspectiveCamera(45,window.innerWidth/window.innerHeight,0.1,1000);
+    camera.position.z=3;
+    const renderer=new THREE.WebGLRenderer({canvas:document.getElementById("globe"),antialias:true,alpha:true});
+    renderer.setSize(window.innerWidth,window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    scene.add(new THREE.AmbientLight(0xffffff,0.6));
+    const dirLight=new THREE.DirectionalLight(0xffffff,0.9);
+    dirLight.position.set(5,5,5);
+    scene.add(dirLight);
+
+    const globe=new THREE.Mesh(
+      new THREE.SphereGeometry(1,64,64),
+      new THREE.MeshStandardMaterial({color:0xffffff, wireframe:true})
+    );
+    scene.add(globe);
+
+    function animate(){
+      requestAnimationFrame(animate);
+      globe.rotation.y+=0.0012;
+      renderer.render(scene,camera);
+    }
+    animate();
+
+    window.addEventListener("resize",()=>{
+      camera.aspect=window.innerWidth/window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth,window.innerHeight);
+    });
+  </script>
+</body>
+</html>
